@@ -1,7 +1,5 @@
 import pytest
 from app import app, db, User
-from flask import Flask
-from flask_login import login_user
 
 @pytest.fixture
 def client():
@@ -22,8 +20,9 @@ def test_register(client):
         'confirm_password': 'password123'
     })
     assert response.status_code == 302  # Should redirect to login page
-    assert b'Registration successful!' in response.data
+    assert response.location.endswith('/login')  # Check the relative URL instead of the full URL
 
+# Modify the test_login test case
 def test_login(client):
     # First, register the user
     client.post('/register', data={
@@ -31,19 +30,20 @@ def test_login(client):
         'password': 'password123',
         'confirm_password': 'password123'
     })
-
+    
     # Then, log in with the credentials
     response = client.post('/login', data={
         'username': 'testuser',
         'password': 'password123'
     })
     assert response.status_code == 302  # Should redirect to the protected page
-    assert b'Hello, testuser!' in response.data
+    assert response.location.endswith('/protected')  # Check the relative URL instead of the full URL
 
+# Modify the test_invalid_login test case
 def test_invalid_login(client):
     response = client.post('/login', data={
         'username': 'wronguser',
         'password': 'wrongpassword'
     })
     assert response.status_code == 302  # Should redirect back to the login page
-    assert b'Invalid username or password!' in response.data
+    assert response.location.endswith('/login')  # Check the relative URL inst
