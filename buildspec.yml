@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8  # Specify the Python version you want to use
+    commands:
+      - echo "Installing dependencies"
+      - pip install --upgrade pip  # Upgrade pip to avoid issues with old versions
+      - pip install -r requirements.txt  # Install all dependencies from the requirements.txt
+      - pip install pytest  # Install pytest for running tests
+
+  build:
+    commands:
+      - echo "Build started"
+      - python -m flask db upgrade  # Run migrations, if applicable (e.g., Flask-Migrate)
+      - pytest --maxfail=5 --disable-warnings -q  # Run tests, stop after 5 failures, suppress warnings, quiet output
+      - echo "Build completed"
+
+  post_build:
+    commands:
+      - echo "Build and test completed"
+      # Optionally, you can upload test results to S3 or log output
+      # aws s3 cp test-results.json s3://your-bucket-name/
+
+artifacts:
+  files:
+    - '**/*'  # Include all project files (or specify only files you need to upload)
+  base-directory: '.'  # Root directory where files will be uploaded
+
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'  # Cache pip dependencies for faster future builds
