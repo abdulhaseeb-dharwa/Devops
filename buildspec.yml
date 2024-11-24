@@ -13,7 +13,7 @@ phases:
   build:
     commands:
       - echo "Build started"
-      - python -m flask db upgrade  # Run migrations, if applicable (e.g., Flask-Migrate)
+      #- python -m flask db upgrade  # Run migrations, if applicable (e.g., Flask-Migrate)
       - pytest --maxfail=5 --disable-warnings -q  # Run tests, stop after 5 failures, suppress warnings, quiet output
       - echo "Build completed"
 
